@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amanda Azani — Video Editor &amp; Subtitling</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Tokens ─────────────────────────────── */
+    :root {
+      --white:   #F8F8F6;
+      --ink:     #111111;
+      --mid:     #6B6B6B;
+      --lo:      #AEAEA8;
+      --rule:    #E2E2DF;
+      --accent:  #C4A882;
+      --display: 'Cormorant Garamond', Georgia, serif;
+      --body:    'DM Sans', system-ui, sans-serif;
+    }
+
+    /* ── Reset ───────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--white);
+      color: var(--ink);
+      font-family: var(--body);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Nav ─────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 28px 48px;
+      background: var(--white);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s, padding 0.3s;
+    }
+    nav.scrolled {
+      border-bottom-color: var(--rule);
+      padding: 18px 48px;
+    }
+
+    .nav-logo {
+      font-family: var(--display);
+      font-size: 18px;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--body);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--mid);
+      text-decoration: none;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0; right: 0;
+      height: 1px;
+      background: var(--ink);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.25s ease;
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+
+    /* ── Hero ────────────────────────────────── */
+    /* Signature: asymmetric layout — name anchored top-left at massive
+       scale, role + CTA anchored bottom-right. Diagonal eye path. */
+    section#hero {
+      min-height: 100svh;
+      padding: 0 48px;
+      display: grid;
+      grid-template-rows: 1fr auto 1fr;
+      grid-template-columns: 1fr 1fr;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-eyebrow {
+      grid-row: 1;
+      grid-column: 1;
+      align-self: end;
+      padding-bottom: 16px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--lo);
+      padding-top: 120px;
+    }
+
+    .hero-name {
+      grid-row: 2;
+      grid-column: 1 / 3;
+      font-family: var(--display);
+      font-size: clamp(64px, 13vw, 180px);
+      font-weight: 300;
+      line-height: 0.88;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+    .hero-name em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-right {
+      grid-row: 3;
+      grid-column: 2;
+      justify-self: end;
+      padding-top: 36px;
+      padding-bottom: 80px;
+      max-width: 320px;
+      text-align: right;
+    }
+    .hero-right p {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--mid);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    .hero-cta {
+      display: inline-block;
+      padding: 13px 28px;
+      border: 1px solid var(--ink);
+      font-family: var(--body);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+    }
+    .hero-cta:hover {
+      background: var(--ink);
+      color: var(--white);
+    }
+
+    /* thin vertical rule on far right of hero */
+    section#hero::after {
+      content: '';
+      position: absolute;
+      top: 15%; bottom: 15%;
+      right: 48px;
+      width: 1px;
+      background: var(--rule);
+    }
+
+    /* ── Divider ─────────────────────────────── */
+    .section-rule {
+      height: 1px;
+      background: var(--rule);
+      margin: 0 48px;
+    }
+
+    /* ── Features ────────────────────────────── */
+    section#features {
+      padding: 100px 48px 110px;
+    }
+
+    .features-header {
+      margin-bottom: 64px;
+    }
+    .features-header h2 {
+      font-family: var(--display);
+      font-size: clamp(36px, 5vw, 60px);
+      font-weight: 300;
+      letter-spacing: -0.01em;
+      line-height: 1.1;
+    }
+    .features-header h2 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0;
+    }
+
+    article.feature-col {
+      padding: 0 48px 0 0;
+      border-right: 1px solid var(--rule);
+    }
+    article.feature-col:first-child { padding-left: 0; }
+    article.feature-col:last-child {
+      padding-right: 0;
+      border-right: none;
+    }
+    article.feature-col + article.feature-col {
+      padding-left: 48px;
+    }
+
+    .feature-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .feature-col h3 {
+      font-family: var(--display);
+      font-size: 28px;
+      font-weight: 300;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      margin-bottom: 16px;
+    }
+
+    .feature-col p {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--mid);
+      line-height: 1.75;
+      margin-bottom: 28px;
+    }
+
+    .feature-link {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 2px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .feature-link:hover {
+      border-color: var(--ink);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* ── Card images ── */
+    .feature-image {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background: var(--rule);
+      margin-bottom: 28px;
+      overflow: hidden;
+      position: relative;
+      /* Lock every card image to identical height */
+      height: 0;
+      padding-bottom: 75%; /* = 4:3 ratio */
+    }
+    /* show label text when image is missing / empty src */
+    .feature-image[data-empty="true"]::after,
+    .feature-image:has(img[src=""])::after {
+      content: 'Add your image here';
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--lo);
+    }
+    .card-img {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+    /* hide broken img icon when src is empty */
+    .card-img[src=""] { visibility: hidden; }
+
+    /* ── Channel buttons ── */
+    .channel-btns {
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .channel-btn {
+      display: inline-flex; align-items: center; gap: 9px;
+      padding: 11px 18px;
+      font-family: var(--body); font-size: 12px;
+      font-weight: 500; letter-spacing: 0.1em;
+      text-transform: uppercase; text-decoration: none;
+      border-radius: 2px;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .channel-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+    .channel-btn--yt {
+      background: #FF0000; color: #fff;
+    }
+    .channel-btn--tt {
+      background: var(--ink); color: #fff;
+    }
+
+    /* ── Footer ──────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--rule);
+      padding: 40px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    footer .footer-name {
+      font-family: var(--display);
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--ink);
+    }
+    footer .footer-copy {
+      font-size: 12px;
+      color: var(--lo);
+      margin-top: 2px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .footer-links a {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--mid);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--ink); }
+
+    /* ── Scroll reveal ───────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.22s; }
+    .reveal-delay-3 { transition-delay: 0.34s; }
+
+    /* ── Responsive ──────────────────────────── */
+    @media (max-width: 820px) {
+      nav, .section-rule, section#features, footer { padding-left: 24px; padding-right: 24px; }
+      section#hero { padding-left: 24px; padding-right: 24px; }
+      section#hero::after { display: none; }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+        gap: 56px;
+      }
+      article.feature-col {
+        border-right: none;
+        border-bottom: 1px solid var(--rule);
+        padding: 0 0 56px 0 !important;
+      }
+      article.feature-col:last-child { border-bottom: none; padding-bottom: 0 !important; }
+
+      footer { flex-direction: column; gap: 24px; text-align: center; }
+      .footer-links { justify-content: center; }
+    }
+
+    @media (max-width: 560px) {
+      .hero-right { grid-column: 1 / 3; justify-self: start; text-align: left; }
+      .nav-links { gap: 20px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .hero-cta, .nav-links a, .feature-link, footer a { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Nav ── -->
+  <nav id="main-nav" aria-label="Primary navigation">
+    <a href="#hero" class="nav-logo">Amanda Azani</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <section id="hero" aria-labelledby="hero-name">
+    <p class="hero-eyebrow">Video Editing &nbsp;·&nbsp; Subtitling &nbsp;·&nbsp; Writer</p>
+
+    <h1 class="hero-name" id="hero-name">
+      Amanda<br /><em>Azani</em>
+    </h1>
+
+    <div class="hero-right">
+      <p>
+        High school student, multi-instrumentalist, content creator, and technology enthusiast. I move between music production, machine learning, and long-form writing — curiosity is the through-line.
+      </p>
+      <a href="#work" class="hero-cta">View the work</a>
+    </div>
+  </section>
+
+  <div class="section-rule" role="separator"></div>
+
+  <!-- ── Features ── -->
+  <section id="features" aria-label="About, work, and contact">
+    <header class="features-header reveal">
+      <h2>Three ways<br />to <em>know me</em></h2>
+    </header>
+
+    <div class="features-grid">
+
+      <!-- Col 1: About -->
+      <article class="feature-col reveal reveal-delay-1" id="about">
+        <span class="feature-label">About</span>
+        <div class="feature-image">
+          <img src="Screenshot (928).png" alt="Portrait of Amanda Azani"
+               class="card-img" />
+        </div>
+        <h3>Who Am I</h3>
+        <p>
+          A high school student with passions spanning creativity, technology, and athletics — always pushing to explore new fields and sharpen new skills.
+        </p>
+        <a href="#" class="feature-link" id="bio-open">Full biography</a>
+      </article>
+
+      <!-- Col 2: Work -->
+      <article class="feature-col reveal reveal-delay-2" id="work">
+        <span class="feature-label">Work</span>
+        <div class="feature-image">
+          <img src="Screenshot (929).png" alt="Amanda Azani — YouTube and TikTok content"
+               class="card-img" />
+        </div>
+        <h3>What I'm Capable of Doing</h3>
+        <p>
+          I've made my own YouTube channel, also TikTok, with 1k plus followers,to share my experiences, ideas, and creativities along the way!
+        </p>
+        <div class="channel-btns">
+          <a href="https://www.youtube.com/@AmandaPagam" target="_blank" rel="noopener" class="channel-btn channel-btn--yt">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            YouTube · 1.27K
+          </a>
+          <a href="https://www.tiktok.com/@amandapagam" target="_blank" rel="noopener" class="channel-btn channel-btn--tt">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/></svg>
+            TikTok · 1.7K
+          </a>
+        </div>
+      </article>
+
+      <!-- Col 3: Contact -->
+      <article class="feature-col reveal reveal-delay-3" id="contact">
+        <span class="feature-label">Contact</span>
+        <div class="feature-image">
+          <img src="a3c26c173f6a317431b2ddd586f8b10a.jpg" alt="Amanda Azani — get in touch"
+               class="card-img" />
+        </div>
+        <h3>Let's make something</h3>
+        <p>
+          Have a project, collab, or just want to say hi? Reach out directly —
+          I'm most responsive on WhatsApp and Instagram.
+        </p>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <a href="https://wa.me/6282299436162" target="_blank" rel="noopener" class="feature-link" style="display:inline-flex; align-items:center; gap:8px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;opacity:0.7"><path d="M12 0C5.373 0 0 5.373 0 12c0 2.125.558 4.122 1.533 5.854L.057 23.5a.5.5 0 0 0 .609.61l5.757-1.505A11.943 11.943 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.886 0-3.65-.504-5.17-1.385l-.36-.214-3.793.992.997-3.687-.234-.375A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm5.472-7.618c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
+            WhatsApp me
+          </a>
+          <a href="https://instagram.com/_justmdzn" target="_blank" rel="noopener" class="feature-link" style="display:inline-flex; align-items:center; gap:8px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;opacity:0.7"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+            @_justmdzn
+          </a>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <div class="section-rule" role="separator"></div>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <div>
+      <p class="footer-name">Amanda Azani</p>
+      <p class="footer-copy">© 2026. All rights reserved.</p>
+    </div>
+    <ul class="footer-links" aria-label="Social and external links">
+      <li><a href="https://instagram.com/_justmdzn" target="_blank" rel="noopener" aria-label="Instagram">Instagram</a></li>
+      <li><a href="https://wa.me/6282299436162" target="_blank" rel="noopener" aria-label="WhatsApp">WhatsApp</a></li>
+    </ul>
+  </footer>
+
+  <script>
+    // Nav scroll state
+    const nav = document.getElementById('main-nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 20);
+    }, { passive: true });
+
+    // Scroll reveal
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } }),
+      { threshold: 0.12 }
+    );
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+
+
+  <!-- ── Biography Modal ── -->
+  <div id="bio-overlay" role="dialog" aria-modal="true" aria-labelledby="bio-modal-title" style="
+    display:none; position:fixed; inset:0; z-index:200;
+    background:rgba(17,17,17,0.55); backdrop-filter:blur(4px);
+    align-items:center; justify-content:center; padding:24px;
+  ">
+    <div style="
+      background:var(--white); max-width:620px; width:100%;
+      padding:52px 48px 44px; position:relative;
+      border-top:3px solid var(--accent);
+      max-height:90vh; overflow-y:auto;
+    ">
+      <!-- close button -->
+      <button id="bio-close" aria-label="Close biography" style="
+        position:absolute; top:20px; right:24px;
+        background:none; border:none; cursor:pointer;
+        font-size:22px; color:var(--lo); line-height:1;
+        transition:color 0.2s;
+      " onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--lo)'">&#x2715;</button>
+
+      <span style="font-size:10px;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:14px;">About</span>
+      <h2 id="bio-modal-title" style="font-family:var(--display);font-size:clamp(28px,4vw,42px);font-weight:300;letter-spacing:-0.01em;line-height:1.1;margin-bottom:28px;">
+        Full <em style="font-style:italic;color:var(--accent);">Biography</em>
+      </h2>
+
+      <div style="font-size:15px;font-weight:300;color:var(--mid);line-height:1.85;display:flex;flex-direction:column;gap:16px;">
+        <p>I'm a high school student with a wide range of passions that span creativity, technology, and athletics. Academically driven and naturally curious, I'm always pushing myself to explore new fields and sharpen new skills.</p>
+        <p>On the creative side, I'm a multi-instrumentalist — playing drums, piano, and guitar — and I also produce original music using BandLab. My love for content creation extends to YouTube, where I apply my video editing skills to bring ideas to life on screen. I'm currently expanding into 3D modeling and animation, adding yet another dimension to my creative toolkit.</p>
+        <p>Beyond the arts, I have a strong foothold in technology. I'm an AI enthusiast who keeps up with the latest developments in the field, and I can build and assemble PCs from the ground up. Whether it's hardware or software, I enjoy understanding how things work under the hood.</p>
+        <p>I'm also a writer and communicator — crafting essays, delivering speeches, and working as a translator across languages. In my downtime, I stay active through sports, balancing the mental demands of academics and creativity with physical discipline.</p>
+        <p>From music production to machine learning, video editing to essay writing — I bring dedication and versatility to everything I do.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Biography modal
+    const overlay  = document.getElementById('bio-overlay');
+    const openBtn  = document.getElementById('bio-open');
+    const closeBtn = document.getElementById('bio-close');
+
+    function openBio(e) {
+      e.preventDefault();
+      overlay.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      closeBtn.focus();
+    }
+    function closeBio() {
+      overlay.style.display = 'none';
+      document.body.style.overflow = '';
+      openBtn.focus();
+    }
+
+    openBtn.addEventListener('click', openBio);
+    closeBtn.addEventListener('click', closeBio);
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) closeBio();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && overlay.style.display === 'flex') closeBio();
+    });
+  </script>
+
+</body>
+</html>
